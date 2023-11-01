@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block main %} 
+
+
+        <div class="container text-break">
+          <div class="container text-center">
+            <div class="row">
+              <div class="col">
+                
+              </div>
+            </div>
+          </div>
+              <div class="row">
+                <div class="col-4">
+                <form action="{{url_for('add')}}" method="POST">
+                  <input type="text" name="todo">
+                  <button type="submit"> Add todo</button>
+                </form>
+              </div>
+
+              <div class="col-8">
+                <form action="{{url_for('add')}}" method="POST">
+                  <input type="text" name="todo">
+                  <button type="submit"> Add todo</button>
+                </form>
+              </div>
+              </div>
+            
+            <div class="row">
+            <div class="col-4">
+                    {% for todo in todos %}
+                    <div class="row">
+                      <div class="col-6"> 
+                        <span {% if todo['done'] %} style="text-decoration: line-through" {%endif%}> {{ todo.area }} </span>   
+                      </div>
+                      <div class="col-4"> 
+                        <a href="{{url_for('edit', index=todo.id)}}" class="btn btn-outline-secondary btn-sm" role="button" style="--bs-btn-padding-y: .015rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">Edytuj</a>
+                        <a href="{{url_for('delete', index=todo.id)}}" class="btn btn-outline-danger btn-sm" role="button" style="--bs-btn-padding-y: .015rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">Skasuj</a>
+                      </div>
+                    </div>
+                    {% endfor %}
+
+            </div>
+            <div class="col-8">
+                  {% for todo in todos %}
+                    <div class="row">
+                      <div class="col-6"> 
+                        <span {% if todo['done'] %} style="text-decoration: line-through" {%endif%}> {{ todo.area }} </span>     
+                      </div>
+                      <div class="col-4"> 
+                        <a href="{{url_for('edit', index=todo.id)}}" class="btn btn-outline-secondary btn-sm" role="button" style="--bs-btn-padding-y: .015rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">Edytuj</a>
+                        <a href="{{url_for('delete', index=todo.id)}}" class="btn btn-outline-danger btn-sm" role="button" style="--bs-btn-padding-y: .015rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">Skasuj</a>
+                      </div>
+                    </div>
+                    {% endfor %}
+            </div>
+          </div>
+        </div>   
+
+
+
+
+{% endblock %}
