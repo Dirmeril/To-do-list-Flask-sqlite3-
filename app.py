@@ -70,6 +70,10 @@ def close_db(error):
     if hasattr(g, 'sqlite_db'):
         g.sqlite_db.close()
 
+@app.route('/welcome')
+def welcome():
+    return render_template('welcome.html')
+
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -148,7 +152,7 @@ def add():
     sql_command = 'insert into list_1(area) values(?);'
     db.execute(sql_command, [todo])
     db.commit()
-    sql_command = f"CREATE TABLE IF NOT EXISTS '{nick+todo}'(id INTEGER PRIMARY KEY autoincrement, action varchat(40) NOT NULL);"
+    sql_command = f"CREATE TABLE IF NOT EXISTS '{nick+todo}'(id INTEGER PRIMARY KEY autoincrement, action varchat(40) NOT NULL, done BOOLEAN);"
     db.execute(sql_command)
     db.commit()
     return redirect(url_for('index'))
@@ -218,8 +222,8 @@ def choose(action):
 def add_side(todo_side):
     todo = request.form['todo_side']
     db = get_db()
-    sql_command = f"insert into '{nick+todo_side}'(action) values(?);"
-    db.execute(sql_command, [todo])
+    sql_command = f"insert into '{nick+todo_side}'(action, done) values(?,?);"
+    db.execute(sql_command, [todo, False])
     db.commit()
 
     return redirect(url_for('choose', action=todo_side ))
@@ -253,6 +257,25 @@ def delete_side(todo_side, index):
 
     return redirect(url_for('choose', action=todo_side))
 
+
+@app.route('/done/<action>/<int:index>')
+def done(action, index):
+    db = get_db()
+    command_sql = f"select done from '{nick+action}' where id = ?;"
+    cur = db.execute(command_sql, [index])
+    done = cur.fetchone()
+    print(done[0])
+    print('___________________________')
+    if done[0] == True:
+        command_sql = f"update '{nick+action}' set done=? where id = ?;"
+        db.execute(command_sql, [False, index])
+        db.commit()
+    else:
+        command_sql = f"update '{nick+action}' set done=? where id = ?;"
+        db.execute(command_sql, [True, index])
+        db.commit()
+    
+    return redirect(url_for('choose', action=action))
 
 if __name__ == '__main__':
     app.run()   
