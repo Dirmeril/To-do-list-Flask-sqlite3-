@@ -1,11 +1,18 @@
 {% extends 'base.html' %}
 
-{% block main %} 
-<div class="row">
-<form action="{{ url_for('edit', index=index, old_todo=old_todo) }}" method="POST">
-    <input type="text" value={{todo.area}} name="todo">
-    <button type="submit"> Add todo</button>
-</form>
+{% block main %}
+&nbsp
+<div class="container text-break">
+    &nbsp
+    <div class="container text-center">
+        &nbsp
+        <div class="row">
+        <form action="{{ url_for('edit', index=index, old_todo=old_todo) }}" method="POST">
+            <input type="text" value={{todo.area}} name="todo">
+            <button type="submit"> Add todo</button>
+        </form>
+        </div>
+    </div>
 </div>
 
 {% endblock %}

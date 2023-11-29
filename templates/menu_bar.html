@@ -1,25 +1,26 @@
-<nav class="navbar navbar-expand-lg bg-primary">
+<nav class="navbar navbar-expand-lg" style="background-color: #000000; color: #ffffff;">
   <div class="container">
-    <a class="navbar-brand" href="#">To Do List</a>
+    <a class="navbar-brand" href="#" style="color: #ffffff;">To Do List</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('login') }}">Login</a>
+          <a class="nav-link" href="{{ url_for('login') }}" style="color: #ffffff;">Login</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Profile</a> 
+          <a class="nav-link" href="#" style="color: #ffffff;">Profile</a> 
         </li>
         <li class="nav-item">
-          <a class="nav-link {{ 'active' if active_menu=='logout' }}" href="{{ url_for('index') }}">Lists</a> 
+          <a class="nav-link {{ 'active' if active_menu=='logout' }}" href="{{ url_for('index') }}" style="color: #ffffff;">Lists</a> 
         </li>
       </ul>
         <li class="d-flex">
-          <a class="nav-link {{ 'active' if active_menu=='logout' }}" href="{{ url_for('logout') }}">Logout</a>
+          <a class="nav-link {{ 'active' if active_menu=='logout' }}" href="{{ url_for('logout') }}" style="color: #ffffff;">Logout</a>
         </li>
       
     </div>
   </div>
 </nav>
+
