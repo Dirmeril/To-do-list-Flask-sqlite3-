@@ -11,7 +11,8 @@ app = Flask(__name__)
 
 app.config['SECRET_KEY'] = '123QQ'
 
-app_info = {'db_file' : r"C:\Users\Laptop-D\Documents\Dokumenty\Python\Flask\CRUD\data\tododb.db"}
+app_info = {'db_file' : r"C:\Users\Laptop-D\Documents\Dokumenty\Python\Flask\CRUD\data\tododb.db",
+            'db_user' : r"C:\Users\Laptop-D\Documents\Dokumenty\Python\Flask\CRUD\data\user.db"}
 nick = 'xd22'
 
 
@@ -64,6 +65,14 @@ def get_db():
         g.sqlite_db = conn
         return g.sqlite_db
 
+# connetction to user_db
+def get_db_user():
+    if not hasattr(g, 'sqlite_db'): 
+        conn = sqlite3.connect(app_info['db_user'])
+        conn.row_factory = sqlite3.Row
+        g.sqlite_db = conn
+        return g.sqlite_db
+
 
 @app.teardown_appcontext 
 def close_db(error):
@@ -95,6 +104,55 @@ def login():
         flash('Login failed, try again')
         return render_template('login.html')
 
+
+@app.route('/registration', methods=['GET', 'POST'])
+def registration():
+    
+    db = get_db()
+    message = None
+    user = {}
+
+    if request.method =='GET':
+        return render_template('registration.html', active_menu='users', user=user)
+    else:
+        user['user_name'] = '' if not 'user_name' in request.form else request.form['user_name']
+        user['email'] = '' if not 'email' in request.form else request.form['email']
+        user['user_pass'] = '' if not 'user_pass' in request.form else request.form['user_pass']
+        user['user_pass_again'] = '' if not'user_pass_again' in request.form else request.form['user_pass_again']
+
+        cursor = db.execute('select count(*) as cnt from users where name = ?', [user['user_name']])
+        record = cursor.fetchone()
+        is_user_name_unique = (record['cnt'] == 0)
+        cursor = db.execute('select count(*) as cnt from users where email = ?', [user['email']])
+        record = cursor.fetchone()
+        is_user_email_unique = (record['cnt'] == 0)
+        
+        if user['user_name'] == '':
+            message = 'Name cannot be empty'
+        elif user['email'] == '':
+            message = 'email cannot be empty'
+        elif user['user_pass'] == '':
+            message = 'Password cannot be empty'
+        elif user['user_pass'] != user['user_pass_again']:
+            message = 'Passwords must be same'
+        elif not is_user_name_unique:
+            message = 'User with the name {} already exists'.format(user['user_name'])
+        elif not is_user_email_unique:
+            message = 'User with the email {} alresdy exists'.format(user['email'])
+
+        if not message:
+            user_pass = UserPass(user['user_name'], user['user_pass'])
+            password_hash = user_pass.hash_password()
+            sql_statement = '''insert into users(name, email, password, is_active, is_admin) values(?,?,?, True, False);'''
+            db.execute(sql_statement, [user['user_name'], user['email'], password_hash])
+            db.commit()
+            flash('User {} created'.format(user['user_name']))
+            return redirect(url_for('index'))
+        else:
+            flash('Correct error: {}'.format(message))
+            return render_template('registration.html', active_menu='users', user=user)
+
+
 @app.route('/logout')
 def logout():
 
@@ -115,11 +173,17 @@ def index():
     sql_command = 'select * from list_1 LIMIT 1;'
     cur = db.execute(sql_command)
     table = cur.fetchone()
-    sql_command = f"select * from '{nick+table[1]}'"
-    cur = db.execute(sql_command)
-    todos_side = cur.fetchall()
+    
+    if table != None:
+        sql_command = f"select * from '{nick+table[1]}'"
+        cur = db.execute(sql_command)
+        todos_side = cur.fetchall()
+        action = table[1]
+    else:
+        action = None
+        todos_side = None
 
-    return render_template('index.html', todos=todos, todos_side=todos_side, action=table[1])
+    return render_template('index.html', todos=todos, todos_side=todos_side, action=action)
 
 
 # app.py – init route and function

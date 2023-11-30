@@ -16,9 +16,9 @@
 
 <div class="container ">
     &nbsp
-    <form method="POST" action="{{url_for('login')}}">
+    <form method="POST" action="{{url_for('registration')}}">
         <div class="row mt-3 justify-content-center">
-            <div class="col-6 h1">Login</div>
+            <div class="col-6 h1">Registration</div>
         </div>
 
         <div class="row mt-3 justify-content-center">
@@ -36,12 +36,24 @@
         </div>
 
         <div class="row mt-3 justify-content-center">
-            <div class="col-2"></div>
+            <div class="col-2 col-form-label"><label for="user_pass">Repeat Password</label></div>
             <div class="col-4">
-                <input type="submit" value="Login" class="btn btn-warning">
-                <a href="{{url_for('registration')}}"  class="btn btn-warning" role="button">Register</a>
+                <input type="password" id="user_pass_again" name="user_pass_again" class="form-control">
             </div>
         </div>
+
+        <div class="row mt-3 justify-content-center">
+            <div class="col-2 col-form-label"><label for="user_pass">E-mail</label></div>
+            <div class="col-4">
+                <input type="text" id="email" name="email" class="form-control">
+            </div>
+        </div>
+
+        <div class="row mt-3 justify-content-center">
+            <div class="col-2"></div>
+            <div class="col-4"><input type="submit" value="Register" class="btn btn-warning"></div>
+        </div>
+        
     </form>
 </div>
 

@@ -23,28 +23,35 @@
         </div>
       </div>
     </div>
-        <div class="row " >
+        <div class="row">
           <div class="col-4">
             <div class="d-flex justify-content-center align-items-center text-center"> 
           <form action="{{url_for('add')}}" method="POST">
             <input type="text" name="todo">
-            <button type="submit" class="btn btn-warning"> Add todo</button>
+            <button type="submit" class="btn btn-warning">Add group</button>
           </form>
         </div>
       </div>
-
+      
         <div class="col-7">
           <div class="d-flex justify-content-center align-items-center text-center">
+          {% if not todos %}
+          <div class="row"></div>
+          {% else %}
           <form action="{{url_for('add_side', todo_side=action)}}" method="POST">
             <input type="text" name="todo_side">
-            <button type="submit" class="btn btn-warning"> Add todo</button>
+            <button type="submit" class="btn btn-warning">Add todo</button>
           </form>
+          {% endif %}
         </div>
         </div>
       </div>
       &nbsp
       <div class="row">
       <div class="col-5">
+        {% if not todos %}
+        <div class="row justify-content-center">Add group</div>
+        {% else %}
               {% for todo in todos %}
               <div class="row">
                 <div class="col-5"> 
@@ -57,10 +64,13 @@
                 </div>
               </div>
               {% endfor %}
+          {% endif %}
       </div>
       
       <div class="col-7">
-        {% if todos_side != False %}
+        {% if not todos %}
+        <div class="row"></div>
+        {% else %}
             {% for todo in todos_side %}
               <div class="row">
                 <div class="col-6"> 
