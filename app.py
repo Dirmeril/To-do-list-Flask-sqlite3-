@@ -90,14 +90,6 @@ def get_db():
         db = g.sqlite_db = sqlite3.connect(app_info['db_file'])
     return db
 
-# connetction to user_db
-def get_db_user():
-    if not hasattr(g, 'sqlite_db'): 
-        conn = sqlite3.connect(app_info['db_user'])
-        conn.row_factory = sqlite3.Row
-        g.sqlite_db = conn
-        return g.sqlite_db
-
 
 @app.teardown_appcontext 
 def close_db(error):
@@ -105,44 +97,17 @@ def close_db(error):
         g.sqlite_db.close()
 
 
-@app.route('/')
-def welcome():
-    login = UserPass(session.get('user'))
-    login.get_user_info()
-
-    return render_template('welcome.html', login=login)
-
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-
-    if request.method == 'GET':
-        return render_template('login.html', active_menu='login')
-    else:
-        user_name = '' if 'user_name' not in request.form else request.form['user_name']
-        user_pass = '' if 'user_pass' not in request.form else request.form['user_pass']
-
-        login = UserPass(user_name, user_pass)
-        login_record = login.login_user()
-
-        if login_record != None:    
-            session['user'] = user_name
-            flash('Login succesfull, welcome {}'.format(user_name))
-            return redirect(url_for('index'))
-        else:
-            flash('Login failed, try again')
-            return render_template('login.html', active_menu='login')
-
-
 @app.route('/registration', methods=['GET', 'POST'])
 def registration():
+    login = UserPass(session.get('user'))
+    login.get_user_info()
     
     db = get_db()
     message = None
     user = {}
 
     if request.method =='GET':
-        return render_template('registration.html', active_menu='users', user=user)
+        return render_template('registration.html', active_menu='users', user=user, login=login)
     else:
         user['user_name'] = '' if not 'user_name' in request.form else request.form['user_name']
         user['email'] = '' if not 'email' in request.form else request.form['email']
@@ -183,7 +148,31 @@ def registration():
             return redirect(url_for('index'))
         else:
             flash('Correct error: {}'.format(message))
-            return render_template('registration.html', active_menu='users', user=user)
+            return render_template('registration.html', active_menu='users', user=user, login=login)
+        
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    login = UserPass(session.get('user'))
+    login.get_user_info()
+    
+
+    if request.method == 'GET':
+        return render_template('login.html', active_menu='login', login=login)
+    else:
+        user_name = '' if 'user_name' not in request.form else request.form['user_name']
+        user_pass = '' if 'user_pass' not in request.form else request.form['user_pass']
+
+        login = UserPass(user_name, user_pass)
+        login_record = login.login_user()
+
+        if login_record != None:    
+            session['user'] = user_name
+            flash('Login succesfull, welcome {}'.format(user_name))
+            return redirect(url_for('index'))
+        else:
+            flash('Login failed, try again')
+            return render_template('login.html', active_menu='login', login=login)
 
 
 @app.route('/logout')
@@ -221,7 +210,7 @@ def index():
         action = None
         todos_side = None
     
-    return render_template('index.html', todos=todos, todos_side=todos_side, action=action, login=login)
+    return render_template('index.html', todos=todos, todos_side=todos_side, action=action, login=login, active_menu = 'Your lists' )
    
 
 # app.py – init route and function
@@ -244,7 +233,37 @@ def init_app():
     return redirect(url_for('index'))
 
 
-# Metody dla głównej listy
+@app.route('/')
+def welcome():
+    login = UserPass(session.get('user'))
+    login.get_user_info()
+
+    return render_template('welcome.html', login=login)
+
+
+@app.route('/profile')
+def profile():
+    login = UserPass(session.get('user'))
+    login.get_user_info()
+    if not login.is_valid:
+        return redirect(url_for('login'))
+
+    return render_template('profile.html', login=login, active_menu = 'Profile')
+
+
+@app.route('/profile/delete')
+def profile_delete():
+    login = UserPass(session.get('user'))
+    login.get_user_info()
+    if not login.is_valid:
+        return redirect(url_for('login'))
+
+    db = get_db()
+    sql_command = ''
+
+    return redirect(url_for('login'))
+
+# Methods for main todo
 @app.route('/add', methods=['POST'])
 def add():
     login = UserPass(session.get('user'))

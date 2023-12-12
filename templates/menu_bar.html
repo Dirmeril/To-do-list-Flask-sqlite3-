@@ -1,25 +1,28 @@
-<nav class="navbar navbar-expand-lg" style="background-color: #000000; color: #ffffff;">
+<nav class="navbar navbar-expand-lg" style="background-color: hsl(214, 33%, 61%);">
   <div class="container">
-    <a class="navbar-brand" href="#" style="color: #ffffff;">To Do List</a>
+    <a class="navbar-brand" href="{{ url_for('welcome') }}" style="color: hsl(214, 72%, 17%);">To Do List</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        {% if not login.is_valid %}
         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('login') }}" style="color: #ffffff;">Login</a>
+          <a class="nav-link" href="{{ url_for('login') }}" style="color: #000000;">Login</a>
+        </li>
+        {% endif %}
+        {% if login.is_valid %}
+        <li class="nav-item">
+          <a class="nav-link {{ 'active' if active_menu=='Your lists' }}" href="{{ url_for('index') }}" >Your lists</a> 
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#" style="color: #ffffff;">Profile</a> 
-        </li>
-        <li class="nav-item">
-          <a class="nav-link {{ 'active' if active_menu=='logout' }}" href="{{ url_for('index') }}" style="color: #ffffff;">Lists</a> 
+          <a class="nav-link {{ 'active' if active_menu=='Profile' }}" aria-current="page" href="{{ url_for('profile') }}" >Profile: {{ login.user }}</a> 
         </li>
       </ul>
         <li class="d-flex">
-          <a class="nav-link {{ 'active' if active_menu=='logout' }}" href="{{ url_for('logout') }}" style="color: #ffffff;">Logout</a>
+          <a class="nav-link" href="{{ url_for('logout') }}">Logout</a>
         </li>
-      
+        {% endif %}
     </div>
   </div>
 </nav>
