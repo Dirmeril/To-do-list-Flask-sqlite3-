@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 app.config['SECRET_KEY'] = '123QQ'
 
-app_info = {'db_file' : r".\data\tododb.db"}
+app_info = {'db_file' : r".\data\database_flask.db"}
 
 
 class UserPass:
@@ -215,6 +215,11 @@ def index():
 # app.py – init route and function
 @app.route('/init_app')
 def init_app():
+    sqlite3.connect(r".\data\database_flask.db")
+    db = get_db()
+    sql_statement = "CREATE TABLE users(id integer primary key autoincrement, name varchar, email varchar, password varchar, is_active boolean, is_admin boolean);"
+    db.execute(sql_statement)
+    db.commit()
     # check if there are users defined (at least one active admin required)
     db = get_db()
     sql_statement = 'select count(*) as cnt from users where is_active and is_admin;'
@@ -316,9 +321,12 @@ def edit(index, old_todo):
         old_todo = old_todo
         todo = request.form['todo']
 
+        if old_todo.strip().lower() == todo.strip().lower():
+            return redirect(url_for('choose', action=todo, login=login ))
+
         db = get_db()
         
-        sql_command = f"ALTER TABLE '{login.user+old_todo}' RENAME TO {login.user+todo};"
+        sql_command = f"ALTER TABLE '{login.user+old_todo}' RENAME TO '{login.user+todo}';"
         db.execute(sql_command)
         db.commit()
 
