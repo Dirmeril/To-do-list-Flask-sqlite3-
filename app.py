@@ -234,6 +234,11 @@ def init_app():
     db.execute(sql_statement, [user_pass.user, 'noone@nowhere.no', user_pass.hash_password()])
     db.commit()
     flash('User {} with password {} has been created'.format(user_pass.user, user_pass.password))
+
+    # Create table for user
+    sql_statement = f"CREATE TABLE '{user_pass.user}' (id INTEGER PRIMARY KEY autoincrement, area varchat(25) NOT NULL);"
+    db.execute(sql_statement)
+    db.commit()
     return redirect(url_for('index'))
 
 
