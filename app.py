@@ -11,8 +11,7 @@ app = Flask(__name__)
 
 app.config['SECRET_KEY'] = '123QQ'
 
-app_info = {'db_file' : r"C:\Users\Laptop-D\Documents\Dokumenty\Python\Flask\CRUD\data\tododb.db",
-            'db_user' : r"C:\Users\Laptop-D\Documents\Dokumenty\Python\Flask\CRUD\data\user.db"}
+app_info = {'db_file' : r".\data\tododb.db"}
 
 
 class UserPass:
@@ -259,11 +258,25 @@ def profile_delete():
         return redirect(url_for('login'))
 
     db = get_db()
-    sql_command = ''
+    sql_command = f"SELECT * FROM '{login.user}';"
+    cur = db.execute(sql_command)
+    list_to_delete = cur.fetchall()
+    for table_to_del in list_to_delete:
+        sql_command = f"DROP TABLE '{login.user+table_to_del[1]}';"
+        cur = db.execute(sql_command)
+        db.commit()
 
-    return redirect(url_for('login'))
+    sql_command = f"DROP TABLE '{login.user}';"
+    db.execute(sql_command)
+    db.commit()
 
-# Methods for main todo
+    sql_command = f"DELETE from users where name = '{login.user}';"
+    db.execute(sql_command)
+    db.commit()
+
+    return redirect(url_for('login')), flash('Your profile has been deleted')
+
+# Methods for main todo (group)
 @app.route('/add', methods=['POST'])
 def add():
     login = UserPass(session.get('user'))
@@ -273,8 +286,15 @@ def add():
     
     todo = request.form['todo']
     if todo.strip() == '':
-        return redirect(url_for('index')), flash('Pole nie może być puste')
+        return redirect(url_for('index')), flash('The field group cannot be empty')
     db = get_db()
+    sql_command = f"SELECT * FROM '{login.user}'"
+    cur = db.execute(sql_command)
+    check_group = cur.fetchall()
+    for _ in check_group:
+        if _[1].lower() == todo.strip().lower():
+            return redirect(url_for('index')), flash(f'You have group with that name: {todo}')
+        
     sql_command = f"insert into '{login.user}' (area) values(?);"
     db.execute(sql_command, [todo])
     db.commit()
@@ -335,7 +355,7 @@ def delete(index):
 
     return redirect(url_for("index", login=login))
 
-
+ 
 @app.route("/choosen/<action>")
 def choose(action):
     login = UserPass(session.get('user'))
@@ -360,7 +380,7 @@ def choose(action):
     return render_template('index.html', todos=todos, todos_side=todos_side, action=action, login=login)
 
 
-# Metody dla pobocznych list
+# Methods for sidelists
 @app.route('/add_side/<todo_side>', methods=['POST'])
 def add_side(todo_side):
     login = UserPass(session.get('user'))
@@ -369,6 +389,8 @@ def add_side(todo_side):
         return redirect(url_for('login'))
     
     todo = request.form['todo_side']
+    if todo.strip() == '':
+        return redirect(url_for('index')), flash('The field todo cannot be empty')
     db = get_db()
     sql_command = f"insert into '{login.user+todo_side}' (action, done) values(?,?);"
     db.execute(sql_command, [todo, False])

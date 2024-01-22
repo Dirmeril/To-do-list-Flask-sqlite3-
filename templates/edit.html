@@ -9,10 +9,16 @@
         <div class="row">
         <form action="{{ url_for('edit', index=index, old_todo=old_todo) }}" method="POST">
             <input type="text" value={{todo.area}} name="todo">
-            <button type="submit"> Add todo</button>
+            <button type="submit" class="btn btn-warning">Rename group</button>
         </form>
         </div>
     </div>
 </div>
+
+<style>
+    .btn-warning {
+      background-color: #ffac3e;
+    }
+    </style>
 
 {% endblock %}

@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block fast %}
+
+<div class="row g-0 fw-semibold text-center"> 
+ 
+    {% for f in get_flashed_messages() %}
+        <div style="border-style: solid; background-color: yellowgreen;">{{f}}</div>
+    {% endfor %}
+    
+</div>
+
+{% endblock %}
+
+{% block main %}
+<div class="container text-break">
+    <div class="container text-center">
+        <div class="row">
+            <div class="col">
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-5">
+            <div class="d-flex justify-content-center align-items-center text-center">
+                <form action="{{url_for('add')}}" method="POST">
+                    <input type="text" name="todo">
+                    <button type="submit" class="btn custom-btn-color">Add todo</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-7">
+            <div class="d-flex justify-content-center align-items-center text-center">
+                <form action="{{url_for('add_side', todo_side=action)}}" method="POST">
+                    <input type="text" name="todo_side">
+                    <button type="submit" class="btn custom-btn-color">Add todo</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-5">
+            {% for todo in todos %}
+            <div class="row">
+                <div class="col-5">
+                    {{ todo.area }}
+                </div>
+                <div class="col-5">
+                    <a href="{{url_for('choose', action=todo.area)}}" class="btn btn-outline-secondary btn-sm" role="button">Wybierz</a>
+                    <a href="{{url_for('edit', index=todo.id, old_todo=todo.area)}}" class="btn btn-outline-secondary btn-sm" role="button">Edytuj</a>
+                    <a href="{{url_for('delete', index=todo.id)}}" class="btn btn-outline-danger btn-sm" role="button">Skasuj</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="col-7">
+            {% if todos_side != False %}
+            {% for todo in todos_side %}
+            <div class="row">
+                <div class="col-6">
+                    <span {% if todo.done %} style="text-decoration: line-through" {%endif%}> {{ todo.action }} </span>
+                </div>
+                <div class="col-4">
+                    <a href="{{url_for('done', action=action, index=todo.id)}}" class="btn btn-outline-secondary btn-sm" role="button">Zrobione</a>
+                    <a href="{{url_for('edit_side', action=action, index=todo.id)}}" class="btn btn-outline-secondary btn-sm" role="button">Edytuj</a>
+                    <a href="{{url_for('delete_side', index=todo.id, todo_side=action)}}" class="btn btn-outline-danger btn-sm" role="button">Skasuj</a>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.custom-btn-color {
+    background-color: #0e8ab0;
+}
+</style>
+
+{% endblock %}
