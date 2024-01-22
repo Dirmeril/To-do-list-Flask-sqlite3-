@@ -1,7 +1,7 @@
 # TODO list with flask and sqlite
 Project "Todo list" with sublist and with registration and login. Every profile has own table which is create when profile is created. 
 
-Instalation --> Init application with /init_app, add it in URL to the rest address. It will create database in .\data\database_flask.db and it'll create first user. Then application will run properly.
+Instalation -->Create folder .\data. Then run app and Init application with /init_app, add it in URL to the rest address. It will create database in .\data\database_flask.db and it'll create first user. Then application will run properly.
 
 Every user has own table named his login. When user add group in list, it will be inserted in main its table and app create new table with name: 'login+name group', which will contain todo.
 
