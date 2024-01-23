@@ -1,7 +1,7 @@
 # TODO list with flask and sqlite
 Project "Todo list" with sublist. App with register and login. Every profile has own table which is create when profile is created. 
 
-### Library: flask, sqlite3
+##### Library: flask, sqlite3
 
 Instalation -->Create folder .\data. Then run app and Init application with '/init_app', add it in URL to the rest address. It will create database in .\data\database_flask.db and it'll create first user. Then application will run properly.
 
